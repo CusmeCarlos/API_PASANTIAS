@@ -1,8 +1,9 @@
+require('dotenv').config();
 const express = require('express');
-const app = express();
 const sequelize = require('./config/db');
-// Conectar la base de datos al iniciar el servidor
-sequelize.sync()
+const app = express();
+
+sequelize.sync() // Sincroniza la base de datos
   .then(() => {
     console.log('Base de datos sincronizada');
   })
@@ -10,7 +11,7 @@ sequelize.sync()
     console.error('Error sincronizando la base de datos:', err);
   });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000; // Usa el puerto de las variables de entorno
 
 app.listen(port, () => {
   console.log(`Servidor corriendo en el puerto ${port}`);
