@@ -1,6 +1,11 @@
-const app = require('./app');
-const PORT = process.env.PORT || 37100;
+const express = require('express');
+const app = express();
 
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
+app.get('/', (req, res) => {
+  res.send('¡API funcionando correctamente!');
+});
+
+const port = process.env.PORT || 37100;
+app.listen(port, () => {
+  console.log(`Servidor corriendo en el puerto ${port}`);
 });
