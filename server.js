@@ -1,18 +1,8 @@
-const express = require('express');
-const app = express();
+const app = require('./app');  // Importar la instancia de express desde app.js
 
-// Middleware para parsear JSON
-app.use(express.json());
+const PORT = process.env.PORT || 37100;  // Usar el puerto de las variables de entorno o 37100 por defecto
 
-// Ruta base para verificar que el servidor está funcionando
-app.get('/', (req, res) => {
-    res.send('API de Pasantías funcionando correctamente');
-});
-
-// Configuración del puerto
-const PORT = process.env.PORT || 37100;
-
-// Inicia el servidor
+// Iniciar el servidor
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
