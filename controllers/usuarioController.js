@@ -1,39 +1,48 @@
-const bcrypt = require('bcryptjs');
-const Usuario = require('../models/Usuario');
+// usuarioController.js
+const Usuario = require('../models/Usuario'); // Verifica que este modelo exista
 
-// Registrar un nuevo usuario
-exports.registrar = async (req, res) => {
-  const { nombre, correo, contraseña, rol_id } = req.body;
-
-  try {
-    const hashedPassword = await bcrypt.hash(contraseña, 10);
-
-    const nuevoUsuario = await Usuario.create({
-      nombre,
-      correo,
-      contraseña: hashedPassword,
-      rol_id,
-    });
-
-    res.status(201).json({ message: 'Usuario registrado exitosamente', usuario: nuevoUsuario });
-  } catch (error) {
-    res.status(500).json({ error: 'Error al registrar usuario', details: error.message });
-  }
+exports.obtenerUsuarios = async (req, res) => {
+    try {
+        const usuarios = await Usuario.findAll();
+        res.json(usuarios);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener usuarios', error });
+    }
 };
 
-// Iniciar sesión
-exports.login = async (req, res) => {
-  const { correo, contraseña } = req.body;
+exports.crearUsuario = async (req, res) => {
+    try {
+        const { nombre, correo, contraseña, rol_id } = req.body;
+        const nuevoUsuario = await Usuario.create({ nombre, correo, contraseña, rol_id });
+        res.status(201).json(nuevoUsuario);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al crear usuario', error });
+    }
+};
 
-  try {
-    const usuario = await Usuario.findOne({ where: { correo } });
-    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+exports.actualizarUsuario = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nombre, correo } = req.body;
+        const usuario = await Usuario.update({ nombre, correo }, { where: { id } });
+        if (usuario[0] === 0) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+        res.json({ message: 'Usuario actualizado correctamente' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al actualizar usuario', error });
+    }
+};
 
-    const isMatch = await bcrypt.compare(contraseña, usuario.contraseña);
-    if (!isMatch) return res.status(401).json({ error: 'Contraseña incorrecta' });
-
-    res.status(200).json({ message: 'Inicio de sesión exitoso', usuario });
-  } catch (error) {
-    res.status(500).json({ error: 'Error al iniciar sesión', details: error.message });
-  }
+exports.eliminarUsuario = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const resultado = await Usuario.destroy({ where: { id } });
+        if (!resultado) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+        res.json({ message: 'Usuario eliminado correctamente' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al eliminar usuario', error });
+    }
 };
