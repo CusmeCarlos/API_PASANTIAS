@@ -1,9 +1,7 @@
 const Actividad = require('../models/Actividad');
-const Usuario = require('../models/Usuario');
 
 exports.crearActividad = async (req, res) => {
-  const { descripcion, tipo_actividad } = req.body;
-  const estudiante_id = req.user.id; // Obtenemos el ID del estudiante autenticado
+  const { descripcion, tipo_actividad, estudiante_id } = req.body;
 
   try {
     const actividad = await Actividad.create({
@@ -11,21 +9,23 @@ exports.crearActividad = async (req, res) => {
       tipo_actividad,
       estudiante_id,
     });
-    res.status(201).json(actividad);
+
+    res.status(201).json({ message: 'Actividad creada exitosamente', actividad });
   } catch (error) {
-    res.status(500).json({ error: 'Error al crear la actividad' });
+    res.status(500).json({ error: 'Error al crear la actividad', details: error.message });
   }
 };
 
 exports.listarActividades = async (req, res) => {
-  const estudiante_id = req.user.id; // Obtenemos el ID del estudiante autenticado
+  const { estudiante_id } = req.query; // Filtrar por estudiante_id
 
   try {
     const actividades = await Actividad.findAll({
-      where: { estudiante_id },
+      where: estudiante_id ? { estudiante_id } : undefined,
     });
+
     res.json(actividades);
   } catch (error) {
-    res.status(500).json({ error: 'Error al listar actividades' });
+    res.status(500).json({ error: 'Error al listar actividades', details: error.message });
   }
 };
