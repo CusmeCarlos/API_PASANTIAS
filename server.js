@@ -1,11 +1,17 @@
 const express = require('express');
 const app = express();
+const sequelize = require('./config/db');
+// Conectar la base de datos al iniciar el servidor
+sequelize.sync()
+  .then(() => {
+    console.log('Base de datos sincronizada');
+  })
+  .catch(err => {
+    console.error('Error sincronizando la base de datos:', err);
+  });
 
-app.get('/', (req, res) => {
-  res.send('¡API funcionando correctamente!');
-});
+const port = process.env.PORT || 3000;
 
-const port = process.env.PORT || 37100;
 app.listen(port, () => {
   console.log(`Servidor corriendo en el puerto ${port}`);
 });
