@@ -15,7 +15,7 @@ app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/actividades', actividadRoutes);
 app.use('/api/horas', horaRoutes);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 37100;  // Usar el puerto 37100 por defecto
 
 sequelize.sync({ alter: true }).then(() => {
   app.listen(PORT, () => console.log(`Servidor corriendo en el puerto ${PORT}`));
